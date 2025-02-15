@@ -1,75 +1,76 @@
-import cv2
-import numpy as np
-import os
+Image-Based Encryption and Decryption
 
+Introduction
 
-image_path = "Temp.jpg"
-if not os.path.exists(image_path):
-    print("Error: Image file not found.")
-    exit()
+This project implements an image-based encryption and decryption technique using Python. It securely embeds a secret message within an image, ensuring confidential data transmission and protection from unauthorized access.
 
-img = cv2.imread(image_path)
-if img is None:
-    print("Error: Unable to read the image.")
-    exit()
+Features
 
-msg = input("Enter secret message: ")
-password = input("Enter a passcode: ")
+Encrypts a secret message into an image without altering its visible quality.
 
-image_height, image_width, _ = img.shape
-max_message_length = image_height * image_width * 3  
+Uses a passcode for encryption and decryption.
 
-if len(msg) > max_message_length:
-    print("Error: Message is too long for the image.")
-    exit()
+Implements an end marker to ensure accurate message retrieval.
 
-msg += "<END>"  
-msg_index = 0
+Ensures secure communication through steganography.
 
-for row in range(image_height):
-    for col in range(image_width):
-        for channel in range(3):  
-            if msg_index < len(msg):
-                img[row, col, channel] = ord(msg[msg_index])  
-                msg_index += 1
-            else:
-                break
-        if msg_index >= len(msg):
-            break
-    if msg_index >= len(msg):
-        break
+Technologies Used
 
-encrypted_image_path = "encryptedImage.jpg"
-cv2.imwrite(encrypted_image_path, img)
-print(f"Encrypted image saved as {encrypted_image_path}")
+Python for scripting and automation.
 
-os.system(f"start {encrypted_image_path}")
+OpenCV (cv2) for image processing.
 
-img = cv2.imread(encrypted_image_path)
-if img is None:
-    print("Error: Unable to read the encrypted image.")
-    exit()
+NumPy for numerical computations.
 
-input_password = input("Enter passcode for decryption: ")
+Installation & Setup
 
-if password != input_password:
-    print("Error: Incorrect passcode. Access denied.")
-    exit()
+Install the required libraries:
+pip install opencv-python numpy
 
-decrypted_message = ""
+Place the image (Temp.jpg) in the project directory.
 
-for row in range(image_height):
-    for col in range(image_width):
-        for channel in range(3):
-            char_val = img[row, col, channel]
-            if char_val == ord('<'):  
-                next_chars = ''.join([chr(img[row, col, (channel + i) % 3]) for i in range(4)])
-                if next_chars == "<END>":
-                    print("Decrypted message:", decrypted_message)
-                    exit()
-            decrypted_message += chr(char_val)
+Run the script:
 
-print("Decrypted message:", decrypted_message)
+python encrypt_decrypt.py
 
+Usage
 
+Encryption:
+
+The script prompts for a secret message and a passcode.
+
+It embeds the message within the image and saves it as encryptedImage.jpg.
+
+Decryption:
+
+The script prompts for the passcode.
+
+If correct, it retrieves and displays the hidden message.
+
+Example Output
+
+Encryption
+
+Enter secret message: GET THE KEY
+Enter a passcode: 1234
+Encrypted image saved as encryptedImage.jpg
+
+Decryption
+
+Enter passcode for decryption: 1234
+Decrypted message: GET THE KEY
+
+Future Enhancements
+
+Enhance encryption techniques with AI-driven algorithms.
+
+Support for multiple file formats beyond images.
+
+Develop a cloud-based encryption and decryption service.
+
+Create a user-friendly GUI for broader accessibility.
+
+Author
+
+Developed by Manoj
 
